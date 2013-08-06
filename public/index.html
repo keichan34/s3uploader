@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Files</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <div id="file-uploader-form">
+        <h1>Upload a file.</h1>
+
+        <form id="dummy">
+          <fieldset>
+            <legend>File Information</legend>
+            <div class="form-group">
+              <label for="file-name">File Name</label>
+              <input type="text" class="form-control" name="filename" id="filename">
+            </div>
+            <div class="form-group">
+              <label for="files">File</label>
+              <input type='file' name='files[]' id='files' />
+            </div>
+          </fieldset>
+          <a href="#" class="btn btn-success" id="startUpload">Start Upload</a>
+        </form>
+      </div>
+
+      <div id="upload-status" style="display: none;">
+        <h1>Upload Status</h1>
+        <div class="progress progress-striped active">
+          <div class="progress-bar" style="width: 0%;" id="progress-bar"></div>
+        </div>
+        <span id="status-text">Idle.</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script type="text/javascript" src="/javascripts/s3upload.js"></script>
+<script>
+
+$('#dummy').submit(function(e) { e.preventDefault(); });
+
+$('#startUpload').click(function(e) {
+  e.preventDefault();
+
+  $('#file-uploader-form').hide();
+  $('#upload-status').show();
+
+  var s3upload = s3upload != null ? s3upload : new S3Upload({
+    file_dom_selector: '#files',
+    s3_sign_put_url: '/signS3put',
+    s3_object_name: $('#filename').val(),
+    onProgress: function(percent, message) { // Use this for live upload progress bars
+      console.log('Upload progress: ', percent, message);
+      $('#progress-bar').css({'width': percent + '%'});
+      $('#status-text').text(message + '(' + percent + '%)');
+    },
+    onFinishS3Put: function(public_url) { // Get the URL of the uploaded file
+      console.log('Upload finished: ', public_url);
+      $('#status-text').text('Upload finished successfully. Reload this page to upload another file.');
+      $('#progress-bar').parent('.progress').removeClass('active');
+    },
+    onError: function(status) {
+      $('#status-text').text('Error: ' + status + '. Try reloading the page and try again.');
+      console.log('Upload error: ', status);
+    }
+  });
+
+});
+
+</script>
+</body>
+</html>
