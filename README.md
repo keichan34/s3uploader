@@ -28,6 +28,10 @@ Setup
 Changelog
 =========
 
+## Version 1.1
+
+* Re-release under the MIT license.
+
 ## Version 1.0
 
 * Initial release
