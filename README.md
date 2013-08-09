@@ -24,3 +24,10 @@ Setup
 2. Apply the attached [CORS policy](crossdomain.xml) to the bucket.
 3. [Make a new IAM user and give it read/write access to the bucket.](http://keita.flagship.cc/2013/07/amazon-iam-policy-s3-bucket/)
 4. Setup the configuration variables.
+
+Changelog
+=========
+
+## Version 1.0
+
+* Initial release
