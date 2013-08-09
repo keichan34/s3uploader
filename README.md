@@ -1,7 +1,18 @@
 s3uploader
 ==========
 
-A brief Sinatra app to allow users to send large files to you.
+A brief Sinatra app to allow users to send large files to you. When I say large, I mean large. S3 supports up to 5 terabyte files, but I don't think many browsers will allow that.
+
+### Features
+
+* Pause / resume uploads on the fly.
+* Recoverable: resilient to browser crashes / computer shutdowns, etc.
+* Multiple files.
+* Directly to S3.
+
+### Limitations
+
+* The minimum chunk size for S3 is 5 megabytes, so files under 5 megabytes cannot be uploaded.
 
 Relevant Configuration Variables
 ================================
@@ -17,6 +28,12 @@ Relevant Configuration Variables
 
 * `HTTP_BASIC_PASSWORD`: Optional. If defined, will enable basic HTTP authentication.
 
+Dependencies
+============
+
+* jQuery
+* Underscore.js
+
 Setup
 =====
 
@@ -27,6 +44,10 @@ Setup
 
 Changelog
 =========
+
+## Version 2.0
+
+* Complete rewrite based on [resumable.js](https://github.com/23/resumable.js/); uses the [S3 Multipart API](http://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html) to upload files.
 
 ## Version 1.1
 

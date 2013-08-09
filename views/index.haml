@@ -1,0 +1,75 @@
+!!!
+%html
+  %head
+    %title Upload Files
+    %link{:href => "/stylesheets/bootstrap.min.css", :rel => "stylesheet", :type => "text/css"}/
+  %body
+    .container
+      .row
+        .col-12
+          #file-uploader-form
+            %h1 Upload files.
+            %ul#fileList
+            %button#addFile.btn.btn-success Add...
+            %button#startUpload.btn Start Uploading
+          #upload-status{:style => "display: none;"}
+            %h1 Upload Status
+            .progress.progress-striped.active
+              #progress-bar.progress-bar{:style => "width: 0%;"}
+            %span#status-text Idle.
+    %script{:src => "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"}
+    %script{:src => "//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}
+    %script{:src => "/javascripts/s3resumable.js"}
+    :javascript
+      (function() {
+
+        var r = new S3Resumable({
+          initiateTarget: '/transfer/initiate',
+          testChunkTarget: '/transfer/parts',
+          authorizeChunkTarget: '/transfer/signature_for_chunk',
+          finalizeTarget: '/transfer/finalize',
+          s3BucketEndpoint: 'https://#{ S3_BUCKET_NAME }.#{ S3_HOSTNAME }/',
+          awsAccessKeyId: '#{ S3_ACCESS_KEY }'
+        });
+
+        r.assignBrowse(document.getElementById('addFile'));
+
+        $('#startUpload').click(function(e) {
+          e.preventDefault();
+
+          window.onbeforeunload = function() {
+            return "There are uploads in progress.";
+          };
+
+          r.upload();
+        });
+
+        r.on('fileAdded', function(file, event) {
+          $('<li>' + file.fileName + '</li>').appendTo('#fileList');
+        });
+
+        r.on('uploadStart', function() {
+
+          $('#file-uploader-form').hide();
+          $('#upload-status').show();
+
+        });
+
+        r.on('progress', function() {
+
+          var percent = r.progress() * 100;
+          $('#progress-bar').css({'width': percent + '%'});
+          $('#status-text').text('Uploading... (' + Math.ceil(percent) + '%)');
+
+        });
+
+        r.on('complete', function(){
+          $('#progress-bar').css({'width': '100%'});
+          $('#progress-bar').parent('.progress').removeClass('active');
+          $('#status-text').text('Upload finished successfully. Reload this page to upload more files.');
+
+          window.onbeforeunload = function() {};
+        });
+
+      })();
+

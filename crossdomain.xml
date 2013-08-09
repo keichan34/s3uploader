@@ -11,7 +11,10 @@
         <AllowedMethod>PUT</AllowedMethod>
         <MaxAgeSeconds>7200</MaxAgeSeconds>
         <AllowedHeader>Content-Type</AllowedHeader>
+        <AllowedHeader>Content-Length</AllowedHeader>
+        <AllowedHeader>Authorization</AllowedHeader>
         <AllowedHeader>x-amz-acl</AllowedHeader>
+        <AllowedHeader>x-amz-date</AllowedHeader>
         <AllowedHeader>origin</AllowedHeader>
     </CORSRule>
 </CORSConfiguration>
