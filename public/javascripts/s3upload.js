@@ -103,7 +103,6 @@
         };
       }
       xhr.setRequestHeader('Content-Type', file.type);
-      xhr.setRequestHeader('x-amz-acl', 'bucket-owner-full-control');
       return xhr.send(file);
     };
 
